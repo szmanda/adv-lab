@@ -7,7 +7,7 @@
     foreach ($movies as $movie) {
         ?>
             <div class="card m-3">
-                <a href="/movie?id=<?php echo $movie["id"] ?>" class="link"></a>
+                <a href="/movie.php?id=<?php echo $movie["id"] ?>" class="link"></a>
                 <div class="card-header">
                     <h4 class="card-title">
                         <?php echo $movie["title"] ?>

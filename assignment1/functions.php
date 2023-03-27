@@ -13,6 +13,14 @@ function getMovies($start = 0, $limit = 10) {
     return $movies;
 }
 
+function getMovie($movieId) {
+    global $mysqli;
+    $sql = "SELECT * FROM movies WHERE id = ${movieId};";
+    $result = $mysqli->query($sql);
+    $movie = mysqli_fetch_assoc($result);
+    return $movie;
+}
+
 function getRatings($start = 0, $limit = 10) {
     global $mysqli;
     $sql = "SELECT * FROM ratings ORDER BY movieId LIMIT ${start},${limit}";
@@ -48,7 +56,7 @@ function getMovieRatings($movieId, $start = 0, $limit = 10) {
 
 function getMovieTags($movieId, $start = 0, $limit = 10) {
     global $mysqli;
-    $sql = "SELECT * FROM ratings WHERE movieId = ${movieId} ORDER BY movieId LIMIT ${start},${limit}";
+    $sql = "SELECT * FROM tags WHERE movieId = ${movieId} ORDER BY movieId LIMIT ${start},${limit}";
     $result = $mysqli->query($sql);
     $ratings = Array();
     while ($row = mysqli_fetch_assoc($result)) {
