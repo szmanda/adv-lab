@@ -1,32 +1,79 @@
 <?php
+    include("header.php");
     require_once "functions.php";
 
     if (isset($_GET['id'])) {
         $id = $_GET['id'];
 
         $movie = getMovie($id);
-        $ratings = getMovieRatings($id, 0, 2);
+        $ratings = getMovieRatings($id, 0, 5);
         $tags = getMovieTags($id, 0, 3);
 
-        foreach ($movie as $key => $value) {
-            echo "Key: $key; Value: $value<br>";
-        }
+        ?>
+            <h1><?php echo $movie["title"] ?></h1>
+            <h3><?php echo $movie["genres"] ?></h3>
+            <a class="btn btn-outline-primary" href="movie_edit.php?id=<?php echo $id?>" role="button">Edit movie</a>
+            <a class="btn btn-outline-danger" href="movie_delete.php?id=<?php echo $id?>" role="button">Delete movie</a>
+            <br>
 
-        foreach ($ratings as $rating) {
-            echo "Rating: <br>";
-            foreach ($rating as $key => $value) {
-                echo "Key: $key; Value: $value<br>";
-            }
-            echo "<br>";
-        }
+            <h2>Ratings</h2>
+            <a class="btn btn-outline-primary" href="#" role="button">Add rating</a>
+            <table class="table">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Rating</th>
+                <th scope="col">User ID</th>
+                <th scope="col">Date</th>
+                <th scope="col">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    for ($i = 0; $i < count($ratings); $i++) {
+                ?>
+                        <tr>
+                        <th scope="row"><?php echo $i ?></th>
+                        <td><?php echo $ratings[$i]["rating"] ?></td>
+                        <td><?php echo $ratings[$i]["userId"] ?></td>
+                        <td><?php echo $ratings[$i]["timestamp"] ?></td>
+                        <td><a class="btn btn-outline-danger" href="#" role="button">Delete</a></td>
+                        </tr>
+                <?php
+                    }
+                ?>
+            </tbody>
+            </table>
 
-        foreach ($tags as $tag) {
-            echo "Tag: <br>";
-            foreach ($tag as $key => $value) {
-                echo "Key: $key; Value: $value<br>";
-            }
-            echo "<br>";
-        }
+            <h2>Tags</h2>
+            <a class="btn btn-outline-primary" href="#" role="button">Add tag</a>
+            <table class="table">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Tag</th>
+                <th scope="col">User ID</th>
+                <th scope="col">Date</th>
+                <th scope="col">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    for ($i = 0; $i < count($tags); $i++) {
+                ?>
+                        <tr>
+                        <th scope="row"><?php echo $i ?></th>
+                        <td><?php echo $tags[$i]["tag"] ?></td>
+                        <td><?php echo $tags[$i]["userId"] ?></td>
+                        <td><?php echo $tags[$i]["timestamp"] ?></td>
+                        <td><a class="btn btn-outline-danger" href="#" role="button">Delete</a></td>
+                        </tr>
+                <?php
+                    }
+                ?>
+            </tbody>
+            </table>
+        <?php
     }
     else {
         header('Location: index.php');

@@ -1,5 +1,6 @@
 <h1>Movies</h1>
 <!-- MOVIES -->
+<a href="movie_add.php">Add movie</a>
 <div class="d-flex flex-wrap">
 <?php
     require_once('functions.php');

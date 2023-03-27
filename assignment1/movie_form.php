@@ -9,7 +9,7 @@
             $title = $movie['title'];
             $genres = $movie['genres'];
         }
-
+        include("header.php");
         ?>
         <div class="col-8">
             <form action=<?php ($update) ? (print "movie_edit.php") : (print "movie_add.php"); ?> method="post">
@@ -47,7 +47,7 @@
     }
 
     function validateMovieForm($post) {
-        $errors = null;
+        $errors = Array();
         return $errors;
     }
 ?>
