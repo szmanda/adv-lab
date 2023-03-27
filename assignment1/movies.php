@@ -3,7 +3,7 @@
 <div class="d-flex flex-wrap">
 <?php
     require_once('functions.php');
-    $movies = getMovies(50);
+    $movies = getMovies(0, 50);
     foreach ($movies as $movie) {
         ?>
             <div class="card m-3">
