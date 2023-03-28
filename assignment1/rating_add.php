@@ -1,18 +1,29 @@
 <?php
+    session_start();
+
     require_once "rating_form.php";
-    require_once "functions.php";
 
     if (isAddRatingPost($_POST)) {
         $errors = validateRatingForm($_POST);
         if (empty($errors)) {
-            insertRating($_POST['userId'], $_POST['movieId'], $_POST['rating']);
-            header("Location: movie.php?id=".$_POST['movieId']);
+            $movieId = $_POST['movieId'];
+            insertRating($_POST['userId'], $movieId, $_POST['rating'], time());
+            header("Location: movie.php?id=${movieId}");
         }
         else {
             // display errors
         }
     }
     else {
-        getRatingForm($_GET['movieId']);
+        $userId = '';
+        $movieId = '';
+
+        if (isset($_SESSION['userId']))
+            $userId = $_SESSION['userId'];
+            
+        if (isset($_GET['movieId']))
+            $movieId = $_GET['movieId'];
+
+        getRatingForm($userId, $movieId);
     }
 ?>
