@@ -69,7 +69,7 @@
                         <th scope="row"><?php echo $i ?></th>
                         <td><?php echo $tags[$i]["tag"] ?></td>
                         <td><?php echo $tags[$i]["userId"] ?></td>
-                        <td><?php echo $tags[$i]["timestamp"] ?></td>
+                        <td><?php echo timestampToDate($tags[$i]["timestamp"]) ?></td>
                         <td><a class="btn btn-outline-danger" href="tag_delete.php?userId=<?php echo $tags[$i]["userId"]?>&movieId=<?php echo $id?>&tag=<?php echo $tags[$i]["tag"]?>" role="button">Delete</a></td>
                         </tr>
                 <?php

@@ -89,9 +89,9 @@ function getTags($start = 0, $limit = 10) {
     return $tags;
 }
 
-function insertTag($userId, $movieId, $tag) {
+function insertTag($userId, $movieId, $tag, $timestamp) {
     global $mysqli;
-    $query = "INSERT INTO tags(userId, movieId, tag) VALUES (${userId}, ${movieId}, '${tag}');";
+    $query = "INSERT INTO tags(userId, movieId, tag, timestamp) VALUES (${userId}, ${movieId}, '${tag}', ${timestamp});";
     mysqli_query($mysqli, $query);
 }
 

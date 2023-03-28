@@ -1,7 +1,3 @@
 <?php include("header.php") ?>
-
-  <main>
-    <?php require('tabs.php') ?>
-  </main>
-
+    <?php require('movies.php') ?>
 <?php include("footer.php") ?>

@@ -19,13 +19,19 @@
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="movies-tab" data-bs-toggle="tab" data-bs-target="#movies" type="button" role="tab" aria-controls="movies" aria-selected="true">Movies</button>
+          <a href="/">
+          <button class="nav-link" id="movies-tab" data-bs-toggle="tab" data-bs-target="#movies" type="button" role="tab" aria-controls="movies" aria-selected="false">Movies</button>
+          </a>
         </li>
         <li class="nav-item" role="presentation">
+          <a href="ratings.php">
           <button class="nav-link" id="ratings-tab" data-bs-toggle="tab" data-bs-target="#ratings" type="button" role="tab" aria-controls="ratings" aria-selected="false">Ratings</button>
+          </a>
         </li>
         <li class="nav-item" role="presentation">
+          <a href="tags.php">
           <button class="nav-link" id="tags-tab" data-bs-toggle="tab" data-bs-target="#tags" type="button" role="tab" aria-controls="tags" aria-selected="false">Tags</button>
+          </a>
         </li>
         <li class="nav-item" role="presentation">
           <a href="login.php">
@@ -33,9 +39,13 @@
           </a>
         </li>
         <li class="nav-item" role="presentation">
+          <a href="register.php">
           <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">Register</button>
+          </a>
         </li>
       </ul>
       
       
   </header>
+<main>
+<div class="container">
