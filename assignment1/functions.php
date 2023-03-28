@@ -21,28 +21,6 @@ function getMovie($movieId) {
     return $movie;
 }
 
-function getRatings($start = 0, $limit = 10) {
-    global $mysqli;
-    $sql = "SELECT * FROM ratings ORDER BY movieId LIMIT ${start},${limit}";
-    $result = $mysqli->query($sql);
-    $ratings = Array();
-    while ($row = mysqli_fetch_assoc($result)) {
-        $ratings[] = $row;
-    }
-    return $ratings;
-}
-
-function getTags($start = 0, $limit = 10) {
-    global $mysqli;
-    $sql = "SELECT * FROM tags ORDER BY movieId LIMIT ${start},${limit}";
-    $result = $mysqli->query($sql);
-    $tags = Array();
-    while ($row = mysqli_fetch_assoc($result)) {
-        $tags[] = $row;
-    }
-    return $tags;
-}
-
 function getMovieRatings($movieId, $start = 0, $limit = 10) {
     global $mysqli;
     $sql = "SELECT * FROM ratings WHERE movieId = ${movieId} ORDER BY movieId LIMIT ${start},${limit}";
@@ -83,10 +61,51 @@ function deleteMovie($id) {
     mysqli_query($mysqli, $query);
 }
 
-function deleteRating() {
-    // TODO what is the pk
+// TAGS
+
+function getTags($start = 0, $limit = 10) {
+    global $mysqli;
+    $sql = "SELECT * FROM tags ORDER BY movieId LIMIT ${start},${limit}";
+    $result = $mysqli->query($sql);
+    $tags = Array();
+    while ($row = mysqli_fetch_assoc($result)) {
+        $tags[] = $row;
+    }
+    return $tags;
 }
 
-function deleteTag() {
-    // TODO what is the pk
+function insertTag($userId, $movieId, $tag) {
+    global $mysqli;
+    $query = "INSERT INTO tags(userId, movieId, tag) VALUES (${userId}, ${movieId}, '${tag}');";
+    mysqli_query($mysqli, $query);
+}
+
+function deleteTag($userId, $movieId, $tag) {
+    global $mysqli;
+    $query = "DELETE FROM tags WHERE userId = ${userId} AND movieId = ${movieId} AND tag = '${tag}';";
+    mysqli_query($mysqli, $query);
+}
+
+// RATINGS
+function getRatings($start = 0, $limit = 10) {
+    global $mysqli;
+    $sql = "SELECT * FROM ratings ORDER BY movieId LIMIT ${start},${limit}";
+    $result = $mysqli->query($sql);
+    $ratings = Array();
+    while ($row = mysqli_fetch_assoc($result)) {
+        $ratings[] = $row;
+    }
+    return $ratings;
+}
+
+function insertRating($userId, $movieId, $rating) {
+    global $mysqli;
+    $query = "INSERT INTO ratings(userId, movieId, rating) VALUES (${userId}, ${movieId}, ${rating});";
+    mysqli_query($mysqli, $query);
+}
+
+function deleteRating($userId, $movieId, $rating) {
+    global $mysqli;
+    $query = "DELETE FROM ratings WHERE userId = ${userId} AND movieId = ${movieId} AND rating = ${rating};";
+    mysqli_query($mysqli, $query);
 }
