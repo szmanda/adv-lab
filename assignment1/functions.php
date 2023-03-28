@@ -2,6 +2,15 @@
 
 require_once('database.php');
 
+function timestampToDate($timestamp) {
+    $dt = new DateTime("@$timestamp");
+    return $dt->format('Y-m-d');
+}
+
+function dateToTimestamp($date) {
+    return strtotime($date);
+}
+
 function getMovies($start = 0, $limit = 10) {
     global $mysqli;
     $sql = "SELECT * FROM movies ORDER BY id DESC LIMIT ${start},${limit}";
@@ -77,14 +86,22 @@ function insertMovie($title, $genres) {
     mysqli_query($mysqli, $query);
 }
 
-function deleteMovie($id) {
+function insertRating($userId, $movieId, $rating, $timestamp) {
     global $mysqli;
-    $query = "DELETE FROM movies WHERE id = ${id}";
+    $query = "INSERT INTO ratings(userId, movieId, rating, timestamp) VALUES (${userId}, ${movieId}, ${rating}, ${timestamp});";
     mysqli_query($mysqli, $query);
 }
 
-function deleteRating() {
-    // TODO what is the pk
+function deleteMovie($id) {
+    global $mysqli;
+    $query = "DELETE FROM movies WHERE id = ${id};";
+    mysqli_query($mysqli, $query);
+}
+
+function deleteRating($userId, $movieId) {
+    global $mysqli;
+    $query = "DELETE FROM ratings WHERE userId = ${userId} AND movieId = ${movieId};";
+    mysqli_query($mysqli, $query);
 }
 
 function deleteTag() {

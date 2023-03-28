@@ -17,7 +17,7 @@
             <br>
 
             <h2>Ratings</h2>
-            <a class="btn btn-outline-primary" href="#" role="button">Add rating</a>
+            <a class="btn btn-outline-primary" href="/rating_add.php?movieId=<?php echo $id?>" role="button">Add rating</a>
             <table class="table">
             <thead>
                 <tr>
@@ -36,8 +36,12 @@
                         <th scope="row"><?php echo $i ?></th>
                         <td><?php echo $ratings[$i]["rating"] ?></td>
                         <td><?php echo $ratings[$i]["userId"] ?></td>
-                        <td><?php echo $ratings[$i]["timestamp"] ?></td>
-                        <td><a class="btn btn-outline-danger" href="#" role="button">Delete</a></td>
+                        <td><?php echo timestampToDate($ratings[$i]["timestamp"])?></td>
+                        <td>
+                            <a class="btn btn-outline-danger" 
+                            href="/rating_delete.php?movieId=<?php echo $id ?>&userId=<?php echo $ratings[$i]["userId"] ?>"
+                            role="button">Delete</a>
+                        </td>
                         </tr>
                 <?php
                     }
@@ -65,7 +69,7 @@
                         <th scope="row"><?php echo $i ?></th>
                         <td><?php echo $tags[$i]["tag"] ?></td>
                         <td><?php echo $tags[$i]["userId"] ?></td>
-                        <td><?php echo $tags[$i]["timestamp"] ?></td>
+                        <td><?php echo timestampToDate($tags[$i]["timestamp"])?></td>
                         <td><a class="btn btn-outline-danger" href="#" role="button">Delete</a></td>
                         </tr>
                 <?php
