@@ -39,10 +39,15 @@
           </a>
         </li>
         <li class="nav-item" role="presentation">
+          <a href="logout.php">
+          <button class="nav-link" id="logout-tab" data-bs-toggle="tab" data-bs-target="#logout" type="button" role="tab" aria-controls="logout" aria-selected="false">Logout</button>
+          </a>
+        </li>
+        <!-- <li class="nav-item" role="presentation">
           <a href="register.php">
           <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">Register</button>
           </a>
-        </li>
+        </li> -->
       </ul>
       
       
