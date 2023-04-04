@@ -177,7 +177,7 @@ public class MoviesController : ControllerBase
 
         return vec;
     }
-     
+
     [HttpGet("GetCosineSimilarity/{movieID1}/{movieID2}")]
     public double GetCosineSimilarity(int movieID1, int movieID2)
     {
@@ -201,5 +201,25 @@ public class MoviesController : ControllerBase
 
         double cosineSimilarity = bothVec.Sum() / (vec1Length * vec2Length);
         return cosineSimilarity;
+    }
+
+    [HttpGet("GetSimilarWithTreshold/{treshold}/{movieID}")]
+    public IEnumerable<Movie> GetSimilarWithTreshold(double treshold, int movieID){
+        MoviesContext dbContext = new MoviesContext();
+        var moviesGenres = dbContext.Movies.Select(m=>new {m.MovieID, m.Genres});
+        int[] movieVec = GetGenresVectorByMovie(movieID);
+        int len = dbContext.Genres.Count();
+        List<int> recommendIds = new List<int>();
+        foreach (var movieGenre in moviesGenres) {
+            int[] movieGenreVec = new int[len];
+            foreach (Genre genre in movieGenre.Genres) {
+                movieGenreVec[genre.GenreID-1] = 1;
+            }
+            double similarity = cosineSimilarity(movieVec, movieGenreVec);
+            if(similarity > treshold) {
+                recommendIds.Add(movieGenre.MovieID);
+            }
+        }
+        return dbContext.Movies.Where(m=>recommendIds.Contains(m.MovieID));
     }
 }
