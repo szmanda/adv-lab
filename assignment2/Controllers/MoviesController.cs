@@ -165,11 +165,11 @@ public class MoviesController : ControllerBase
     }
 
     [HttpGet("GetGenresVectorByMovie/{movieID}")]
-    public short[] GetGenresVectorByMovie(int movieID)
+    public int[] GetGenresVectorByMovie(int movieID)
     {
+        MoviesContext dbContext = new MoviesContext();
         IEnumerable<Genre> movieGenres = GetGenresByMovie(movieID);
-        IEnumerable<Genre> allGenres = GetAllGenres();
-        short[] vec = new short[allGenres.Count()];
+        int[] vec = new int[dbContext.Genres.Count()];
         foreach (Genre genre in movieGenres)
         {
             vec[genre.GenreID-1] = 1;
