@@ -155,4 +155,12 @@ public class MoviesController : ControllerBase
         MoviesContext dbContext = new MoviesContext();
         return dbContext.Movies.Where(m=>m.Genres.Any(p=>p.Name.Contains(search_phrase)));
     }
+
+    [HttpGet("GetSimilarGenres/{movieID}")]
+    public IEnumerable<Genre> GetSimilarGenres(int movieID)
+    {
+        MoviesContext dbContext = new MoviesContext();
+        IEnumerable<Genre> similarGenres = dbContext.Movies.Where(m=>m.MovieID==movieID).SelectMany(m=>m.Genres);
+        return similarGenres;
+    }
 }
