@@ -177,4 +177,29 @@ public class MoviesController : ControllerBase
 
         return vec;
     }
+     
+    [HttpGet("GetCosineSimilarity/{movieID1}/{movieID2}")]
+    public double GetCosineSimilarity(int movieID1, int movieID2)
+    {
+        int[] vec1 = GetGenresVectorByMovie(movieID1);
+        int[] vec2 = GetGenresVectorByMovie(movieID2);
+
+        return cosineSimilarity(vec1, vec2);
+    }
+
+    private double cosineSimilarity(int[] vec1, int[] vec2)
+    {
+        int[] bothVec = vec1.Zip(vec2, (a, b) => a & b).ToArray();
+        double vec1Length = 0.0;
+        double vec2Length = 0.0;
+        for (int i = 0; i < vec1.Length; i++) {
+            vec1Length += vec1[i] * vec1[i];
+            vec2Length += vec2[i] * vec2[i];
+        }
+        vec1Length = Math.Sqrt(vec1Length);
+        vec2Length = Math.Sqrt(vec2Length);
+
+        double cosineSimilarity = bothVec.Sum() / (vec1Length * vec2Length);
+        return cosineSimilarity;
+    }
 }
