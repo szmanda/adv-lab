@@ -156,11 +156,25 @@ public class MoviesController : ControllerBase
         return dbContext.Movies.Where(m=>m.Genres.Any(p=>p.Name.Contains(search_phrase)));
     }
 
-    [HttpGet("GetSimilarGenres/{movieID}")]
-    public IEnumerable<Genre> GetSimilarGenres(int movieID)
+    [HttpGet("GetGenresByMovie/{movieID}")]
+    public IEnumerable<Genre> GetGenresByMovie(int movieID)
     {
         MoviesContext dbContext = new MoviesContext();
-        IEnumerable<Genre> similarGenres = dbContext.Movies.Where(m=>m.MovieID==movieID).SelectMany(m=>m.Genres);
-        return similarGenres;
+        IEnumerable<Genre> genres = dbContext.Movies.Where(m=>m.MovieID==movieID).SelectMany(m=>m.Genres);
+        return genres;
+    }
+
+    [HttpGet("GetGenresVectorByMovie/{movieID}")]
+    public short[] GetGenresVectorByMovie(int movieID)
+    {
+        IEnumerable<Genre> movieGenres = GetGenresByMovie(movieID);
+        IEnumerable<Genre> allGenres = GetAllGenres();
+        short[] vec = new short[allGenres.Count()];
+        foreach (Genre genre in movieGenres)
+        {
+            vec[genre.GenreID-1] = 1;
+        }
+
+        return vec;
     }
 }
