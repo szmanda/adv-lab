@@ -255,4 +255,22 @@ public class MoviesController : ControllerBase
             .OrderByDescending(r => r.RatingValue)
             .Select(r => r.RatedMovie);
     }
+
+    [HttpGet("GetSimilarMoviesByHighestRated/{userID}")]
+    public IEnumerable<Movie> GetSimilarMoviesByHighestRated(int userID)
+    {
+        MoviesContext dbContext = new MoviesContext();
+        const double similarityThreshold = 0.7;
+        Movie? userHighestRatedMovie = GetMoviesRatedByUserSorted(userID).First();
+        if (userHighestRatedMovie != null)
+            return GetSimilarWithTreshold(similarityThreshold, userHighestRatedMovie.MovieID);
+        else
+            return new List<Movie>();
+    }
+
+    [HttpGet("GetRecommendations/{userID}")]
+    public IEnumerable<Movie> GetRecommendations(int userID, int count)
+    {
+        return GetSimilarMoviesByHighestRated(userID).Take(count);
+    }
 }
