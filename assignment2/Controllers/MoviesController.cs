@@ -222,4 +222,21 @@ public class MoviesController : ControllerBase
         }
         return dbContext.Movies.Where(m=>recommendIds.Contains(m.MovieID));
     }
+
+    // method returns a list of movies rated by a user with a given id
+    [HttpGet("GetMoviesRatedByUser/{userID}")]
+    public IEnumerable<Movie> GetMoviesRatedByUser(int userID) {
+        MoviesContext dbContext = new MoviesContext();
+        return dbContext.Ratings.Where(r => r.RatingUser.UserID == userID).Select(r => r.RatedMovie);
+    }
+
+    // method  returns a list of movies rated by a user with a given id, sorted by the rating
+    [HttpGet("GetMoviesRatedByUserSorted/{userID}")]
+    public IEnumerable<Movie> GetMoviesRatedByUserSorted(int userID) {
+        MoviesContext dbContext = new MoviesContext();
+        return dbContext.Ratings
+            .Where(r => r.RatingUser.UserID == userID)
+            .OrderByDescending(r => r.RatingValue)
+            .Select(r => r.RatedMovie);
+    }
 }
