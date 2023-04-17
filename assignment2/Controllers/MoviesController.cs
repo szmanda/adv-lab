@@ -169,7 +169,7 @@ public class MoviesController : ControllerBase
     {
         MoviesContext dbContext = new MoviesContext();
         IEnumerable<Genre> movieGenres = GetGenresByMovie(movieID);
-        int[] vec = new int[dbContext.Genres.Count()];
+        int[] vec = new int[dbContext.Genres.Max(g => g.GenreID)];
         foreach (Genre genre in movieGenres)
         {
             vec[genre.GenreID-1] = 1;
@@ -215,8 +215,8 @@ public class MoviesController : ControllerBase
             .Distinct();
     }
 
-    [HttpGet("GetSimilarWithTreshold/{treshold}/{movieID}")]
-    public IEnumerable<Movie> GetSimilarWithTreshold(double treshold, int movieID){
+    [HttpGet("GetSimilarWithThreshold/{threshold}/{movieID}")]
+    public IEnumerable<Movie> GetSimilarWithThreshold(double threshold, int movieID){
         MoviesContext dbContext = new MoviesContext();
         var moviesGenres = dbContext.Movies.Select(m=>new {m.MovieID, m.Genres});
         int[] movieVec = GetGenresVectorByMovie(movieID);
@@ -228,7 +228,7 @@ public class MoviesController : ControllerBase
                 movieGenreVec[genre.GenreID-1] = 1;
             }
             double similarity = cosineSimilarity(movieVec, movieGenreVec);
-            if(similarity > treshold) {
+            if(similarity > threshold) {
                 recommendIds.Add(movieGenre.MovieID);
             }
         }
@@ -263,7 +263,7 @@ public class MoviesController : ControllerBase
         const double similarityThreshold = 0.7;
         Movie? userHighestRatedMovie = GetMoviesRatedByUserSorted(userID).First();
         if (userHighestRatedMovie != null)
-            return GetSimilarWithTreshold(similarityThreshold, userHighestRatedMovie.MovieID);
+            return GetSimilarWithThreshold(similarityThreshold, userHighestRatedMovie.MovieID);
         else
             return new List<Movie>();
     }
@@ -272,5 +272,41 @@ public class MoviesController : ControllerBase
     public IEnumerable<Movie> GetRecommendations(int userID, int count)
     {
         return GetSimilarMoviesByHighestRated(userID).Take(count);
+    }
+
+    [HttpGet("GetRatingsVectorByUser/{userID}")]
+    public int[] GetRatingsVectorByUser(int userID)
+    {
+        MoviesContext dbContext = new MoviesContext();
+        var ratings = dbContext.Ratings
+            .Where(r => r.RatingUser == null ? false : r.RatingUser.UserID == userID)
+            .Where(r => r.RatedMovie != null)
+            .Select(r => Tuple.Create(r.RatingValue, r.RatedMovie.MovieID))
+            .ToList();
+
+        int[] vec = new int[dbContext.Movies.Max(m => m.MovieID)];
+        foreach (var rating in ratings)
+        {
+            vec[rating.Item2-1] = rating.Item1;
+        }
+
+        return vec;
+    }
+
+    [HttpGet("GetSimilarUsers/{threshold}/{userID}")]
+    public IEnumerable<User> GetSimilarUsers(double threshold, int userID)
+    {
+        int[] userRatingsVec = GetRatingsVectorByUser(userID);
+        List<User> users = new List<User>();
+
+        MoviesContext dbContext = new MoviesContext();
+        foreach (User user in dbContext.Users)
+        {
+            int[] vec = GetRatingsVectorByUser(user.UserID);
+            if (cosineSimilarity(userRatingsVec, vec) > threshold)
+                users.Add(user);
+        }
+        
+        return users;
     }
 }
