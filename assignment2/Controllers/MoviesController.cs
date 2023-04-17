@@ -203,6 +203,18 @@ public class MoviesController : ControllerBase
         return cosineSimilarity;
     }
 
+    [HttpGet("GetMoviesWithSameGenre/{movieID}")]
+    public IEnumerable<Movie> GetMoviesWithSameGenre(int movieID)
+    {
+        MoviesContext dbContext = new MoviesContext();
+        return dbContext.Movies
+            .Where(m => m.MovieID == movieID)
+            .SelectMany(m => m.Genres)
+            .SelectMany(g => g.Movies)
+            .Where(m => m.MovieID != movieID)
+            .Distinct();
+    }
+
     [HttpGet("GetSimilarWithTreshold/{treshold}/{movieID}")]
     public IEnumerable<Movie> GetSimilarWithTreshold(double treshold, int movieID){
         MoviesContext dbContext = new MoviesContext();
