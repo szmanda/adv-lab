@@ -247,10 +247,11 @@ public class MoviesController : ControllerBase
 
     // method  returns a list of movies rated by a user with a given id, sorted by the rating
     [HttpGet("GetMoviesRatedByUserSorted/{userID}")]
-    public IEnumerable<Movie> GetMoviesRatedByUserSorted(int userID) {
+    public IEnumerable<Movie?> GetMoviesRatedByUserSorted(int userID) {
         MoviesContext dbContext = new MoviesContext();
         return dbContext.Ratings
-            .Where(r => r.RatingUser.UserID == userID)
+            .Where(r => r.RatingUser == null ? false : r.RatingUser.UserID == userID)
+            .Where(r => r.RatedMovie != null)
             .OrderByDescending(r => r.RatingValue)
             .Select(r => r.RatedMovie);
     }
