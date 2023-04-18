@@ -189,10 +189,12 @@ public class MoviesController : ControllerBase
 
     private double cosineSimilarity(int[] vec1, int[] vec2)
     {
-        int[] bothVec = vec1.Zip(vec2, (a, b) => a & b).ToArray();
+        int[] bothVec = vec1.Zip(vec2, (a, b) => a * b).ToArray();
         double vec1Length = 0.0;
         double vec2Length = 0.0;
         for (int i = 0; i < vec1.Length; i++) {
+            if (vec1[i] == 0 && vec2[i] == 0)
+                continue;
             vec1Length += vec1[i] * vec1[i];
             vec2Length += vec2[i] * vec2[i];
         }
@@ -331,5 +333,38 @@ public class MoviesController : ControllerBase
         return users;
     }
 
+    // T3 returns reccomended movies for a user with a given id
+    [HttpGet("GetT3RecommendationsForUser/{userID}")]
+    public IEnumerable<Movie> GetT3RecommendationsForUser(int userID)
+    {
+        MoviesContext dbContext = new MoviesContext();
+        var treshold = 0.95;
+        var similarUsers = GetSimilarUsersWithThreshold(treshold, userID);
+        int[] topMovieIdsOfSimilarUsers = {1,2,3};
+        var moviesGenres = dbContext.Movies
+            .Where(m=>topMovieIdsOfSimilarUsers
+            .Contains(m.MovieID))
+            .Select(m=>new {m.MovieID, m.Genres});
+        int len = dbContext.Genres.Count();
+        List<int> recommendIds = new List<int>();
+        foreach (var MovieID in topMovieIdsOfSimilarUsers) {
+            int[] movieVec = GetGenresVectorByMovie(MovieID);
+            foreach (var movieGenre in moviesGenres) {
+                int[] movieGenreVec = new int[len];
+                foreach (Genre genre in movieGenre.Genres) {
+                    movieGenreVec[genre.GenreID-1] = 1;
+                }
+                double similarity = cosineSimilarity(movieVec, movieGenreVec);
+                if(similarity > treshold) {
+                    recommendIds.Add(movieGenre.MovieID);
+                }
+            }
+        }
+        
+        var recommendedMovies = dbContext.Movies.Where(m=>recommendIds.Contains(m.MovieID));
 
+        var userMovies = GetMoviesRatedByUser(userID);
+        return recommendedMovies;
+        // return recommendedMovies.Except(userMovies).Distinct();
+    }
 }
