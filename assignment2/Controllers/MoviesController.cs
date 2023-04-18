@@ -292,21 +292,44 @@ public class MoviesController : ControllerBase
 
         return vec;
     }
-
-    [HttpGet("GetSimilarUsers/{threshold}/{userID}")]
-    public IEnumerable<User> GetSimilarUsers(double threshold, int userID)
+    
+    [HttpGet("GetSimilarUsersWithThreshold/{threshold}/{userID}")]
+    public IEnumerable<User> GetSimilarUsersWithThreshold(double threshold, int userID)
     {
-        int[] userRatingsVec = GetRatingsVectorByUser(userID);
-        List<User> users = new List<User>();
+        int[] ratingsVec = GetRatingsVectorByUser(userID);
 
         MoviesContext dbContext = new MoviesContext();
-        foreach (User user in dbContext.Users)
-        {
-            int[] vec = GetRatingsVectorByUser(user.UserID);
-            if (cosineSimilarity(userRatingsVec, vec) > threshold)
-                users.Add(user);
-        }
+        var UsersRatings = dbContext.Ratings
+            .Where(r => r.RatingUser != null && r.RatedMovie != null)
+            .Select(r => new {r.RatingUser, r.RatingValue, r.RatedMovie.MovieID});
         
+        int usersMaxIdx = dbContext.Users.Max(u => u.UserID);
+        int moviesMaxIdx = dbContext.Movies.Max(m => m.MovieID);
+
+        int[,] userRatings = new int[usersMaxIdx+1, moviesMaxIdx+1];
+        User[] usersByID = new User[usersMaxIdx+1];
+
+        foreach (var item in UsersRatings)
+        {
+            userRatings[item.RatingUser.UserID, item.MovieID] = item.RatingValue;
+            usersByID[item.RatingUser.UserID] = item.RatingUser;
+        }
+
+        List<User> users = new List<User>();
+        for (int i = 0; i < userRatings.GetLength(0); ++i) // i == UserID
+        {
+            int[] ratings = new int[userRatings.GetLength(1)]; // c# why???
+            for (int j = 0; j < userRatings.GetLength(1); j++)
+            {
+                ratings[j] = userRatings[i, j];
+            }
+            
+            if (cosineSimilarity(ratingsVec, ratings) > threshold)
+                users.Add(usersByID[i]);
+        }
+
         return users;
     }
+
+
 }
