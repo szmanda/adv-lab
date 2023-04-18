@@ -339,7 +339,7 @@ public class MoviesController : ControllerBase
         var similarUsersOrdered = similarUsers.OrderByDescending(u => u.similarity).ToList();
 
         List<User> users = new List<User>();
-        for (int i = 0; i < similarUsersOrdered.Count() && i < count; ++i)
+        for (int i = 0; i < similarUsersOrdered.Count() && users.Count() < count; ++i)
         {
             if (similarUsersOrdered[i].user.UserID != userID)
                 users.Add(similarUsersOrdered[i].user);
@@ -355,7 +355,7 @@ public class MoviesController : ControllerBase
 
         foreach (User user in similarUsers)
         {
-            IEnumerable<Movie?> userMovies = GetMoviesRatedByUserSorted(user.UserID);
+            IEnumerable<Movie?> userMovies = GetMoviesRatedByUserSorted(user.UserID).Take(numOfMoviesPerUser);
             foreach (Movie? movie in userMovies)
             {
                 if (movie != null)
