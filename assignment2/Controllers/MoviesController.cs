@@ -292,9 +292,15 @@ public class MoviesController : ControllerBase
 
         return vec;
     }
+
+    public class SimilarUser
+    {
+        public User user {get; set;}
+        public double similarity {get; set;}
+    }
     
-    [HttpGet("GetSimilarUsersWithThreshold/{threshold}/{userID}")]
-    public IEnumerable<User> GetSimilarUsersWithThreshold(double threshold, int userID)
+    [HttpGet("GetSimilarUsers/{userID}/{count}")]
+    public IEnumerable<User> GetSimilarUsers(int userID, int count)
     {
         int[] ratingsVec = GetRatingsVectorByUser(userID);
 
@@ -306,30 +312,39 @@ public class MoviesController : ControllerBase
         int usersMaxIdx = dbContext.Users.Max(u => u.UserID);
         int moviesMaxIdx = dbContext.Movies.Max(m => m.MovieID);
 
-        int[,] userRatings = new int[usersMaxIdx+1, moviesMaxIdx+1];
-        User[] usersByID = new User[usersMaxIdx+1];
+        int[,] userRatings = new int[usersMaxIdx, moviesMaxIdx];
+        User[] usersByID = new User[usersMaxIdx];
 
         foreach (var item in UsersRatings)
         {
-            userRatings[item.RatingUser.UserID, item.MovieID] = item.RatingValue;
-            usersByID[item.RatingUser.UserID] = item.RatingUser;
+            userRatings[item.RatingUser.UserID-1, item.MovieID-1] = item.RatingValue;
+            usersByID[item.RatingUser.UserID-1] = item.RatingUser;
         }
 
-        List<User> users = new List<User>();
-        for (int i = 0; i < userRatings.GetLength(0); ++i) // i == UserID
+        List<SimilarUser> similarUsers = new List<SimilarUser>();
+        for (int i = 0; i < userRatings.GetLength(0); ++i)
         {
-            int[] ratings = new int[userRatings.GetLength(1)]; // c# why???
+            int[] ratings = new int[userRatings.GetLength(1)];
             for (int j = 0; j < userRatings.GetLength(1); j++)
             {
                 ratings[j] = userRatings[i, j];
             }
             
-            if (cosineSimilarity(ratingsVec, ratings) > threshold)
-                users.Add(usersByID[i]);
-        }
+            SimilarUser similarUser = new SimilarUser();
+            similarUser.user = usersByID[i];
+            similarUser.similarity = cosineSimilarity(ratingsVec, ratings);
 
+            similarUsers.Add(similarUser);
+        }
+        var similarUsersOrdered = similarUsers.OrderByDescending(u => u.similarity).ToList();
+
+        List<User> users = new List<User>();
+        for (int i = 0; i < similarUsersOrdered.Count() && i < count; ++i)
+        {
+            if (similarUsersOrdered[i].user.UserID != userID)
+                users.Add(similarUsersOrdered[i].user);
+        }
         return users;
     }
-
 
 }
