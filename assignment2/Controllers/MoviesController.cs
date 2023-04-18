@@ -347,4 +347,26 @@ public class MoviesController : ControllerBase
         return users;
     }
 
+    [HttpGet("GetRecomendationsBySimilarUsers/{userID}/{numOfUsers}/{numOfMoviesPerUser}")]
+    public IEnumerable<Movie> GetRecomendationsBySimilarUsers(int userID, int numOfUsers, int numOfMoviesPerUser) {
+        IEnumerable<User> similarUsers = GetSimilarUsers(userID, numOfUsers);
+        int[] userRatings = GetRatingsVectorByUser(userID);
+        List<Movie> recommendations = new List<Movie>();
+
+        foreach (User user in similarUsers)
+        {
+            IEnumerable<Movie?> userMovies = GetMoviesRatedByUserSorted(user.UserID);
+            foreach (Movie? movie in userMovies)
+            {
+                if (movie != null)
+                {
+                    if (userRatings[movie.MovieID-1] == 0)
+                        recommendations.Add(movie);
+                }
+            }
+        }
+
+        return recommendations;
+    }
+
 }
