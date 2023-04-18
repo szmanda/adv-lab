@@ -294,9 +294,15 @@ public class MoviesController : ControllerBase
 
         return vec;
     }
+
+    public class SimilarUser
+    {
+        public User user {get; set;}
+        public double similarity {get; set;}
+    }
     
-    [HttpGet("GetSimilarUsersWithThreshold/{threshold}/{userID}")]
-    public IEnumerable<User> GetSimilarUsersWithThreshold(double threshold, int userID)
+    [HttpGet("GetSimilarUsers/{userID}/{count}")]
+    public IEnumerable<User> GetSimilarUsers(int userID, int count)
     {
         int[] ratingsVec = GetRatingsVectorByUser(userID);
 
@@ -308,39 +314,70 @@ public class MoviesController : ControllerBase
         int usersMaxIdx = dbContext.Users.Max(u => u.UserID);
         int moviesMaxIdx = dbContext.Movies.Max(m => m.MovieID);
 
-        int[,] userRatings = new int[usersMaxIdx+1, moviesMaxIdx+1];
-        User[] usersByID = new User[usersMaxIdx+1];
+        int[,] userRatings = new int[usersMaxIdx, moviesMaxIdx];
+        User[] usersByID = new User[usersMaxIdx];
 
         foreach (var item in UsersRatings)
         {
-            userRatings[item.RatingUser.UserID, item.MovieID] = item.RatingValue;
-            usersByID[item.RatingUser.UserID] = item.RatingUser;
+            userRatings[item.RatingUser.UserID-1, item.MovieID-1] = item.RatingValue;
+            usersByID[item.RatingUser.UserID-1] = item.RatingUser;
         }
 
-        List<User> users = new List<User>();
-        for (int i = 0; i < userRatings.GetLength(0); ++i) // i == UserID
+        List<SimilarUser> similarUsers = new List<SimilarUser>();
+        for (int i = 0; i < userRatings.GetLength(0); ++i)
         {
-            int[] ratings = new int[userRatings.GetLength(1)]; // c# why???
+            int[] ratings = new int[userRatings.GetLength(1)];
             for (int j = 0; j < userRatings.GetLength(1); j++)
             {
                 ratings[j] = userRatings[i, j];
             }
             
-            if (cosineSimilarity(ratingsVec, ratings) > threshold)
-                users.Add(usersByID[i]);
-        }
+            SimilarUser similarUser = new SimilarUser();
+            similarUser.user = usersByID[i];
+            similarUser.similarity = cosineSimilarity(ratingsVec, ratings);
 
+            similarUsers.Add(similarUser);
+        }
+        var similarUsersOrdered = similarUsers.OrderByDescending(u => u.similarity).ToList();
+
+        List<User> users = new List<User>();
+        for (int i = 0; i < similarUsersOrdered.Count() && i < count; ++i)
+        {
+            if (similarUsersOrdered[i].user.UserID != userID)
+                users.Add(similarUsersOrdered[i].user);
+        }
         return users;
     }
 
-    // T3 returns reccomended movies for a user with a given id
+    [HttpGet("GetRecomendationsBySimilarUsers/{userID}/{numOfUsers}/{numOfMoviesPerUser}")]
+    public IEnumerable<Movie> GetRecomendationsBySimilarUsers(int userID, int numOfUsers, int numOfMoviesPerUser) {
+        IEnumerable<User> similarUsers = GetSimilarUsers(userID, numOfUsers);
+        int[] userRatings = GetRatingsVectorByUser(userID);
+        List<Movie> recommendations = new List<Movie>();
+
+        foreach (User user in similarUsers)
+        {
+            IEnumerable<Movie?> userMovies = GetMoviesRatedByUserSorted(user.UserID);
+            foreach (Movie? movie in userMovies)
+            {
+                if (movie != null)
+                {
+                    if (userRatings[movie.MovieID-1] == 0)
+                        recommendations.Add(movie);
+                }
+            }
+        }
+
+        return recommendations;
+    }
+
+    // T3
     [HttpGet("GetT3RecommendationsForUser/{userID}")]
     public IEnumerable<Movie> GetT3RecommendationsForUser(int userID)
     {
         MoviesContext dbContext = new MoviesContext();
         var treshold = 0.95;
-        var similarUsers = GetSimilarUsersWithThreshold(treshold, userID);
-        int[] topMovieIdsOfSimilarUsers = {1,2,3};
+        int[] topMovieIdsOfSimilarUsers = {2,3,4};//GetRecomendationsBySimilarUsers(1, 3, 1).Select(m=>m.MovieID).ToArray();
         var moviesGenres = dbContext.Movies
             .Where(m=>topMovieIdsOfSimilarUsers
             .Contains(m.MovieID))
