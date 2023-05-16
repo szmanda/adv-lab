@@ -1,0 +1,42 @@
+{% extends "userview/base.html" %}
+{% comment %} genres, [movies] {% endcomment %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Find the movie</h1>
+  <form method="GET">
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text"
+        class="form-control" name="title" id="title">
+    </div>
+    <div class="mb-3">
+        <label for="genre" class="form-label">Genre</label>
+        <select class="form-select" name="genre" id="genre">
+            <option value="">All</option>
+            {% for genre in genres %}
+            <option value="{{ genre.id }}">{{ genre.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+  {% if movies %}
+    <h2 class="mt-5">Results</h2>
+  {% endif %}
+  <div class="list-group">
+      {% for movie in movies %}
+      <a href="/movie/{{movie.id}}" class="list-group-item list-group-item-action flex-column align-items-start" aria-current="true">
+          <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{ movie.title }}</h5>
+              <small>
+                  {% for genre in movie.genres.all %}
+                  {{ genre.name }}
+                  {% endfor %}
+                </small>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

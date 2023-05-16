@@ -159,3 +159,26 @@ def logout_request(request):
         messages.success(request, "Logout successful.")
     return redirect("/")
 
+def search(request):
+    movie_title = request.GET['title'] if 'title' in request.GET else None
+    genre_id = request.GET['genre'] if 'genre' in request.GET else None
+    minimum_rating = request.GET.get('minimum_rating')
+    genres = Genre.objects.all()
+    print("searching", movie_title, genre_id, minimum_rating)
+    if movie_title or genre_id or minimum_rating:
+        print("searching for", movie_title, genre_id, minimum_rating)
+        movies = Movie.objects.all()
+        if movie_title:
+            movies = movies.filter(title__icontains=movie_title)
+        if genre_id:
+            movies = movies.filter(genres__id=genre_id)
+        if minimum_rating:
+            movies = movies.filter(ratings__value__gte=minimum_rating)
+            
+        return render(request, 'userview/search.html', {'genres': genres, 'movies': movies})
+    return render(request, 'userview/search.html', {'genres': genres})
+            
+        
+        
+        
+    
