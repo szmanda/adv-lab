@@ -309,7 +309,7 @@ public class MoviesController : ControllerBase
         MoviesContext dbContext = new MoviesContext();
         var UsersRatings = dbContext.Ratings
             .Where(r => r.RatingUser != null && r.RatedMovie != null)
-            .Select(r => new {r.RatingUser, r.RatingValue, r.RatedMovie.MovieID});
+            .Select(r => new {r.RatingUser, r.RatingValue, r.RatedMovie!.MovieID});
         
         int usersMaxIdx = dbContext.Users.Max(u => u.UserID);
         int moviesMaxIdx = dbContext.Movies.Max(m => m.MovieID);

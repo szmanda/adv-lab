@@ -1,0 +1,49 @@
+{% extends "userview/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Rated movies</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Rating</th>
+        <th>Delete Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for movie in page_obj %}
+        <tr>
+          <td>{{ movie.id }}</td>
+          <td><a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a></td>
+          <td>{{ movie.rating.value }}</td>
+          <td><a href="{% url 'rating_delete' movie.rating.id %}">delete</a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="2">No movies available.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+  
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+  
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+  </div>
+</div>
+{% endblock %}
