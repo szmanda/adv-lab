@@ -9,8 +9,16 @@ class Genre(models.Model):
 class Movie(models.Model):
     title = models.CharField(max_length=1000)
     genres = models.ManyToManyField(Genre)
+    average_rating = models.FloatField(default=0)
+    imdb_reference = models.IntegerField(default=0)
+    
 
 class Rating(models.Model):
     value = models.IntegerField()
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    
+class Comment():
+    text = models.CharField(max_length=1000)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
