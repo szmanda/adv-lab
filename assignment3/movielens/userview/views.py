@@ -176,9 +176,28 @@ def search(request):
             movies = movies.filter(ratings__value__gte=minimum_rating)
             
         return render(request, 'userview/search.html', {'genres': genres, 'movies': movies})
-    return render(request, 'userview/search.html', {'genres': genres})
-            
-        
-        
-        
+    return render(request, 'userview/search.html', {'genres': genres})       
     
+def movie_add(request):
+    if request.user.is_authenticated:
+        return redirect("/")
+    else:
+        return redirect("login")
+
+def movie_edit(request, pk):
+    if request.user.is_authenticated:
+        return redirect("/")
+    else:
+        return redirect("login")
+    
+def comment_add(request, movie_id):
+    if request.user.is_authenticated:
+        return redirect("/")
+    else:
+        return redirect("login")
+    
+def comment_delete(request, pk):
+    if request.user.is_authenticated:
+        return redirect("/")
+    else:
+        return redirect("login")
