@@ -258,22 +258,21 @@ public class MoviesController : ControllerBase
             .Select(r => r.RatedMovie);
     }
 
-    [HttpGet("GetSimilarMoviesByHighestRated/{userID}")]
-    public IEnumerable<Movie> GetSimilarMoviesByHighestRated(int userID)
+    [HttpGet("GetSimilarMoviesByHighestRated/{userID}/{threshold}")]
+    public IEnumerable<Movie> GetSimilarMoviesByHighestRated(int userID, double threshold)
     {
         MoviesContext dbContext = new MoviesContext();
-        const double similarityThreshold = 0.7;
         Movie? userHighestRatedMovie = GetMoviesRatedByUserSorted(userID).First();
         if (userHighestRatedMovie != null)
-            return GetSimilarWithThreshold(similarityThreshold, userHighestRatedMovie.MovieID);
+            return GetSimilarWithThreshold(threshold, userHighestRatedMovie.MovieID);
         else
             return new List<Movie>();
     }
 
-    [HttpGet("GetRecommendations/{userID}")]
-    public IEnumerable<Movie> GetRecommendations(int userID, int count)
+    [HttpGet("GetRecommendations/{userID}/{threshold}/{count}")]
+    public IEnumerable<Movie> GetRecommendations(int userID, double threshold, int count)
     {
-        return GetSimilarMoviesByHighestRated(userID).Take(count);
+        return GetSimilarMoviesByHighestRated(userID, threshold).Take(count);
     }
 
     [HttpGet("GetRatingsVectorByUser/{userID}")]
@@ -377,10 +376,10 @@ public class MoviesController : ControllerBase
     {
         MoviesContext dbContext = new MoviesContext();
         var treshold = 0.95;
-        int[] topMovieIdsOfSimilarUsers = {2,3,4};//GetRecomendationsBySimilarUsers(1, 3, 1).Select(m=>m.MovieID).ToArray();
+        int[] topMovieIdsOfSimilarUsers = GetRecomendationsBySimilarUsers(1, 3, 1).Select(m=>m.MovieID).ToArray();
+        //return dbContext.Movies.Where(m=>topMovieIdsOfSimilarUsers.Contains(m.MovieID));
         var moviesGenres = dbContext.Movies
-            .Where(m=>topMovieIdsOfSimilarUsers
-            .Contains(m.MovieID))
+            .Where(m=>topMovieIdsOfSimilarUsers.Contains(m.MovieID))
             .Select(m=>new {m.MovieID, m.Genres});
         int len = dbContext.Genres.Count();
         List<int> recommendIds = new List<int>();
@@ -401,7 +400,6 @@ public class MoviesController : ControllerBase
         var recommendedMovies = dbContext.Movies.Where(m=>recommendIds.Contains(m.MovieID));
 
         var userMovies = GetMoviesRatedByUser(userID);
-        return recommendedMovies;
-        // return recommendedMovies.Except(userMovies).Distinct();
+        return recommendedMovies.Except(userMovies).Distinct();
     }
 }
