@@ -1,0 +1,25 @@
+{% extends "userview/base.html" %}
+
+{% block content %}
+  <header class="bg-primary text-white text-center py-5">
+    <h1>Welcome to Movie Lens</h1>
+    <p class="lead">Discover and explore your favorite movies, TV shows, and actors.</p>
+    <a href="#" class="btn btn-light btn-lg">Get Started</a>
+  </header>
+
+  <section class="container my-5">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <img src="path/to/image.jpg" class="card-img-top" alt="Movie Image">
+          <div class="card-body">
+            <h5 class="card-title">Movie 1</h5>
+            <p class="card-text">A brief description of the movie.</p>
+            <a href="#" class="btn btn-primary">Read More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

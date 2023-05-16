@@ -8,5 +8,7 @@
     <li><a href="{% url 'genre_detail' genre.id %}">{{ genre.name }}</a></li>
   {% endfor %}
 </div>
+<a class="action" href="{% url 'movie_edit' movie.id %}">Edit Movie</a>
 <a class="action" href="{% url 'rating_add' movie.id %}">Add Rating</a>
+<a class="action" href="{% url 'comment_add' movie.id %}">Add Comment</a>
 {% endblock %}

@@ -159,3 +159,26 @@ def logout_request(request):
         messages.success(request, "Logout successful.")
     return redirect("/")
 
+def movie_add(request):
+    if request.user.is_authenticated:
+        return redirect("/")
+    else:
+        return redirect("login")
+
+def movie_edit(request, pk):
+    if request.user.is_authenticated:
+        return redirect("/")
+    else:
+        return redirect("login")
+    
+def comment_add(request, movie_id):
+    if request.user.is_authenticated:
+        return redirect("/")
+    else:
+        return redirect("login")
+    
+def comment_delete(request, pk):
+    if request.user.is_authenticated:
+        return redirect("/")
+    else:
+        return redirect("login")
