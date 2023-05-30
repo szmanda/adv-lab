@@ -8,7 +8,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from .models import Movie, Genre, Rating
-from .forms import NewUserForm, RatingForm
+from .forms import NewUserForm, RatingForm, MovieForm
 
 
 
@@ -184,7 +184,14 @@ def search(request):
     
 def movie_add(request):
     if request.user.is_authenticated:
-        return redirect("/")
+        if request.method == 'POST':
+            form = MovieForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('/')
+        else:
+            form = MovieForm()
+        return render(request, 'userview/movie_add.html', {'form': form})
     else:
         return redirect("login")
 
