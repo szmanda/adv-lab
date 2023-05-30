@@ -11,7 +11,11 @@
   {% endfor %}
   <p><strong>Comments:</strong></p>
   {% for comment in comments %}
-    <li>{{ comment.text }} by {{ comment.user }}</li>
+    <li>{{ comment.text }} by {{ comment.user }}
+      {% if user == comment.user %}
+      <a href="{% url 'comment_delete' comment.pk %}">delete</a>
+      {% endif %}
+    </li>
   {% endfor %}
 </div>
 <a class="action" href="{% url 'movie_edit' movie.id %}">Edit Movie</a>

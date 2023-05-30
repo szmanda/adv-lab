@@ -221,10 +221,13 @@ def comment_add(request, movie_id):
     
 def comment_delete(request, pk):
     if request.user.is_authenticated:
-        comment = get_object_or_404(Comment, id=pk, user=request.user)
+        comment = get_object_or_404(Comment, id=pk)
         movie = comment.movie
-        comment.delete()
-        messages.success(request, f'Comment for {movie.title} has been deleted.')
+        if comment.user != request.user:
+            messages.error(request, f'Comments from other users cannot be deleted')
+        else:
+            comment.delete()
+            messages.success(request, f'Comment for {movie.title} has been deleted.')
         return redirect('movie_detail', pk=movie.pk)
     else:
         return redirect("login")
