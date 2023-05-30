@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .models import Rating, Movie, Genre
+from .models import Rating, Movie, Genre, Comment
 
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -34,3 +34,8 @@ class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
         fields = ['title', 'genres', 'imdb_reference']
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']

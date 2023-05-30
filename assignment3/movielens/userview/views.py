@@ -7,8 +7,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from .models import Movie, Genre, Rating
-from .forms import NewUserForm, RatingForm, MovieForm
+from .models import Movie, Genre, Rating, Comment
+from .forms import NewUserForm, RatingForm, MovieForm, CommentForm
 
 
 
@@ -51,6 +51,7 @@ class MovieView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['genres'] = self.object.genres.all()
+        context['comments'] = Comment.objects.filter(movie=self.object)
         return context
 
 class GenreView(generic.DetailView):
@@ -203,12 +204,27 @@ def movie_edit(request, pk):
     
 def comment_add(request, movie_id):
     if request.user.is_authenticated:
-        return redirect("/")
+        movie = get_object_or_404(Movie, pk=movie_id)
+        if request.method == 'POST':
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.movie = movie
+                comment.user = request.user
+                comment.save()
+                return redirect('movie_detail', pk=movie_id)
+        else:
+            form = CommentForm()
+        return render(request, 'userview/comment_add.html', {'form': form})
     else:
         return redirect("login")
     
 def comment_delete(request, pk):
     if request.user.is_authenticated:
-        return redirect("/")
+        comment = get_object_or_404(Comment, id=pk, user=request.user)
+        movie = comment.movie
+        comment.delete()
+        messages.success(request, f'Comment for {movie.title} has been deleted.')
+        return redirect('movie_detail', pk=movie.pk)
     else:
         return redirect("login")

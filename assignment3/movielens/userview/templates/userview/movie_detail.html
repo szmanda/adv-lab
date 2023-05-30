@@ -9,6 +9,10 @@
   {% for genre in genres %}
     <li><a href="{% url 'genre_detail' genre.id %}">{{ genre.name }}</a></li>
   {% endfor %}
+  <p><strong>Comments:</strong></p>
+  {% for comment in comments %}
+    <li>{{ comment.text }} by {{ comment.user }}</li>
+  {% endfor %}
 </div>
 <a class="action" href="{% url 'movie_edit' movie.id %}">Edit Movie</a>
 <a class="action" href="{% url 'rating_add' movie.id %}">Add Rating</a>
