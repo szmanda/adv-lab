@@ -3,6 +3,8 @@
 {% block content %}
 <div class="container mt-5">
   <h1 class="mb-4">{{ movie.title }}</h1>
+  <p>Average rating: {{ movie.average_rating }}</p>
+  <p>IMDB: {{ movie.imdb_reference }}</p>
   <p><strong>Genres:</strong></p>
   {% for genre in genres %}
     <li><a href="{% url 'genre_detail' genre.id %}">{{ genre.name }}</a></li>
