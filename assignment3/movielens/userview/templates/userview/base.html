@@ -28,6 +28,11 @@
         </ul>
         <ul class="navbar-nav ms-auto">
           {% if user.is_authenticated %}
+            {% if user.is_superuser%}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin_page' %}">Admin page</a>
+              </li>
+            {% endif %}
           <li class="nav-item">
             <a class="nav-link" href="#">{{ user.username }}</a>
           </li>

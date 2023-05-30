@@ -205,3 +205,18 @@ def comment_delete(request, pk):
         return redirect("/")
     else:
         return redirect("login")
+
+## admin page with a form to add a new movie
+from .forms import MovieForm
+def admin_page(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        if request.method == 'POST':
+            form = MovieForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'Movie has been added.')
+                return redirect('admin_page')
+        form = MovieForm()
+        return render(request, 'userview/admin_page.html', {'form': form})
+    else:
+        return redirect("login")
