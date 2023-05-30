@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .models import Rating, Movie, Genre
+
+from .models import Rating, Movie, Genre, Comment
 
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -24,13 +25,18 @@ class RatingForm(forms.ModelForm):
     class Meta:
         model = Rating
         fields = ('value',)
-        
+
 class MovieForm(forms.ModelForm):
-    title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    genres = forms.ModelMultipleChoiceField(queryset=Genre.objects.all(), widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
-    imdb_reference = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    
+    genres = forms.ModelMultipleChoiceField(
+        queryset=Genre.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+    )
+
     class Meta:
         model = Movie
-        fields = ('title', 'genres', 'imdb_reference')
-    
+        fields = ['title', 'genres', 'imdb_reference']
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
