@@ -254,3 +254,13 @@ def admin_page(request):
         return render(request, 'userview/admin_page.html', {'form': form})
     else:
         return redirect("login")
+
+## home page with list of recently popular films
+def home_page(request):
+    movies = Movie.objects.order_by('-average_rating')[:5]
+    
+    template = loader.get_template('userview/home_page.html')
+    context = {
+        'recently_popular_movies': movies
+    }
+    return HttpResponse(template.render(context, request))
