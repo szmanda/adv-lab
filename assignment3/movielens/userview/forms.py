@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
-from .models import Rating, Movie, Genre, Comment
+from .models import Rating, Movie, Genre, Comment, MovieImage
 
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -27,6 +27,12 @@ class RatingForm(forms.ModelForm):
         fields = ('value',)
 
 class MovieForm(forms.ModelForm):
+    front_image = forms.ModelChoiceField(
+        queryset=MovieImage.objects.all(),
+        required=False,
+        empty_label='No front image'
+    )
+
     genres = forms.ModelMultipleChoiceField(
         queryset=Genre.objects.all(),
         widget=forms.CheckboxSelectMultiple,
@@ -34,7 +40,12 @@ class MovieForm(forms.ModelForm):
 
     class Meta:
         model = Movie
-        fields = ['title', 'genres', 'imdb_reference']
+        fields = ['title', 'genres', 'imdb_reference', 'front_image']
+
+class MovieImageForm(forms.ModelForm):
+    class Meta:
+        model = MovieImage
+        fields = ['image']
 
 class CommentForm(forms.ModelForm):
     class Meta:

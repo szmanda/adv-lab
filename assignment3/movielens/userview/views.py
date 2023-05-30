@@ -7,8 +7,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from .models import Movie, Genre, Rating, Comment
-from .forms import NewUserForm, RatingForm, MovieForm, CommentForm
+from .models import Movie, Genre, Rating, Comment, MovieImage
+from .forms import NewUserForm, RatingForm, MovieForm, CommentForm, MovieImageForm
 
 
 
@@ -241,7 +241,6 @@ def comment_delete(request, pk):
         return redirect("login")
 
 ## admin page with a form to add a new movie
-from .forms import MovieForm
 def admin_page(request):
     if request.user.is_authenticated and request.user.is_superuser:
         if request.method == 'POST':
@@ -252,5 +251,24 @@ def admin_page(request):
                 return redirect('admin_page')
         form = MovieForm()
         return render(request, 'userview/admin_page.html', {'form': form})
+    else:
+        return redirect("login")
+
+def movie_image_add(request, movie_id):
+    if request.user.is_authenticated and request.user.is_superuser:
+        movie = get_object_or_404(Movie, pk=movie_id)
+        if request.method == 'POST':
+            form = MovieImageForm(request.POST, request.FILES)
+            if form.is_valid():
+                image = form.save(commit=False)
+                image.movie = movie
+                image.save()
+                return redirect('movie_detail', pk=movie_id)
+            else:
+                messages.error(request, f'Comments from other users cannot be deleted')
+        
+        else:
+            form = MovieImageForm()
+            return render(request, 'userview/movie_image_add.html', {'form': form})
     else:
         return redirect("login")

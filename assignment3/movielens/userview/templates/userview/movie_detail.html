@@ -3,6 +3,22 @@
 {% block content %}
 <div class="container mt-5">
   <h1 class="mb-4">{{ movie.title }}</h1>
+
+  {% if movie.front_image %}
+    <img src="{{ movie.front_image.url }}" alt="Front Image">
+  {% else %}
+    <p>No front image available.</p>
+  {% endif %}
+
+  <h3>Image Gallery:</h3>
+  {% for image in movie.movieimage_set.all %}
+    <img src="{{ image.image.url }}" alt="Gallery Image">
+  {% empty %}
+    <p>No images available.</p>
+  {% endfor %}
+
+  <a href="{% url 'movie_image_add' movie.id %}">Add image</a>
+  
   <p>Average rating: {{ movie.average_rating }}</p>
   <p>IMDB: {{ movie.imdb_reference }}</p>
   <p><strong>Genres:</strong></p>
