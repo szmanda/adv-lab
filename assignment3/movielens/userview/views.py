@@ -198,7 +198,15 @@ def movie_add(request):
 
 def movie_edit(request, pk):
     if request.user.is_authenticated:
-        return redirect("/")
+        movie = get_object_or_404(Movie, pk=pk)
+        if request.method == 'POST':
+            form = MovieForm(request.POST, instance=movie)
+            if form.is_valid():
+                form.save()
+                return redirect('movie_detail', pk=pk)
+        else:
+            form = MovieForm(instance=movie)
+        return render(request, 'userview/movie_edit.html', {'form': form})
     else:
         return redirect("login")
     
