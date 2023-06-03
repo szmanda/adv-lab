@@ -20,7 +20,7 @@
   <a href="{% url 'movie_image_add' movie.id %}">Add image</a>
   
   <p>Average rating: {{ movie.average_rating }}</p>
-  <p>IMDB: {{ movie.imdb_reference }}</p>
+  <a href="https://www.imdb.com/title/tt{{ movie.imdb_reference }}">IMDB reference: {{ movie.imdb_reference }}</a>
   <p><strong>Genres:</strong></p>
   {% for genre in genres %}
     <li><a href="{% url 'genre_detail' genre.id %}">{{ genre.name }}</a></li>
@@ -32,9 +32,10 @@
       <a href="{% url 'comment_delete' comment.pk %}">delete</a>
       {% endif %}
     </li>
+  </div>
   {% endfor %}
-</div>
-<a class="action" href="{% url 'movie_edit' movie.id %}">Edit Movie</a>
-<a class="action" href="{% url 'rating_add' movie.id %}">Add Rating</a>
-<a class="action" href="{% url 'comment_add' movie.id %}">Add Comment</a>
+  <div style="height: 10em;">
+  <a class="action btn btn-secondary" href="{% url 'movie_edit' movie.id %}">Edit Movie</a>
+  <a class="action btn btn-secondary" href="{% url 'rating_add' movie.id %}">Add Rating</a>
+  <a class="action btn btn-secondary" href="{% url 'comment_add' movie.id %}">Add Comment</a>
 {% endblock %}

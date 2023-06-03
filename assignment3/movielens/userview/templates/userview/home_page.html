@@ -1,0 +1,48 @@
+{% extends "userview/base.html" %}
+
+{% block content %}
+{%load crispy_forms_tags %}
+<div class="container py-5">
+    <h1>Home</h1>
+
+    <h3>Welcome 🎥</h3>
+    <p>Discover the magic of cinema with MovieLens, your ultimate guide to movies and their ratings. Explore a vast collection of films, from timeless classics to the latest blockbusters, and find the perfect movie for every occasion.</p>
+    <p>Whether you're a passionate cinephile or just looking for entertainment recommendations, MovieLens has you covered. Our comprehensive database provides detailed information about each movie, including ratings, reviews, cast, and more.</p>
+    <p>Immerse yourself in the world of storytelling, as you dive into genres that ignite your imagination and characters who capture your heart. From heartwarming tales that inspire, to thrilling adventures that keep you on the edge of your seat, MovieLens brings the cinematic experience right to your screen.</p>
+    <p>Unleash your inner movie critic by sharing your thoughts and ratings, and engage in lively discussions with fellow movie enthusiasts. MovieLens is not just a platform—it's a community where ideas are exchanged, friendships are formed, and the love for movies is celebrated.</p>
+    <p>Ready to embark on a cinematic journey like no other? Start exploring now and let MovieLens be your trusted companion in the world of movies.</p>
+    <a class="button" href="{% url 'register' %}">Get Started</a>
+
+    <div style="height: 5em"></div>
+
+    <h3>Recently popular</h3>
+    <div class="list-group">
+        {% for movie in recently_popular_movies %}
+        <a href="/movie/{{movie.id}}" class="list-group-item list-group-item-action flex-column align-items-start" aria-current="true">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1" style="display: inline-block; width: 50%">{{ movie.title }}</h5>
+                  <small>
+                    {% if 1 <= movie.average_rating %}⭐{% endif %}
+                    {% if 2 <= movie.average_rating %}⭐{% endif %}
+                    {% if 3 <= movie.average_rating %}⭐{% endif %}
+                    {% if 4 <= movie.average_rating %}⭐{% endif %}
+                    {% if 5 <= movie.average_rating %}⭐{% endif %}
+                  </small>
+                <small style="display: inline-block; width: 20%">
+                    {% for genre in movie.genres.all %}
+                    {{ genre.name }}
+                    {% endfor %}
+                </small>
+              </div>
+          </a>
+          {% endfor %}
+    </div>
+
+    <div style="height: 5em"></div>
+
+    {% if user.is_authenticated %}
+        <h3>Your reccomendations</h3>
+
+    {% endif %}
+</div>
+{% endblock %}

@@ -272,3 +272,13 @@ def movie_image_add(request, movie_id):
             return render(request, 'userview/movie_image_add.html', {'form': form})
     else:
         return redirect("login")
+    
+## home page with list of recently popular films
+def home_page(request):
+    movies = Movie.objects.order_by('-average_rating')[:5]
+    
+    template = loader.get_template('userview/home_page.html')
+    context = {
+        'recently_popular_movies': movies
+    }
+    return HttpResponse(template.render(context, request))
