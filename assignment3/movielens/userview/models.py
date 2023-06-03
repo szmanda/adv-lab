@@ -19,7 +19,7 @@ class MovieImage(models.Model):
     image = models.ImageField(upload_to='movie_images/')
 
     def __str__(self):
-        return self.movie.title + ' Image'
+        return self.image.name
 
 class Rating(models.Model):
     value = models.IntegerField()

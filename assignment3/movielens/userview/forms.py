@@ -43,6 +43,7 @@ class MovieForm(forms.ModelForm):
         fields = ['title', 'genres', 'imdb_reference', 'front_image']
 
 class MovieImageForm(forms.ModelForm):
+    image = forms.ImageField(max_length=100000000)
     class Meta:
         model = MovieImage
         fields = ['image']

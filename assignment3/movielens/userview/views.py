@@ -265,7 +265,8 @@ def movie_image_add(request, movie_id):
                 image.save()
                 return redirect('movie_detail', pk=movie_id)
             else:
-                messages.error(request, f'Comments from other users cannot be deleted')
+                messages.error(request, form.errors)
+                return redirect('movie_image_add', movie_id)
         
         else:
             form = MovieImageForm()

@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("list", views.IndexView.as_view(), name="movies_list"),
@@ -20,3 +22,7 @@ urlpatterns = [
     path("admin_page", views.admin_page, name="admin_page"),
     path("", views.home_page, name="home_page"),
 ]
+
+if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL,
+                              document_root=settings.MEDIA_ROOT)
