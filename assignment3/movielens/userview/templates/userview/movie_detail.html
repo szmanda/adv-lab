@@ -9,7 +9,7 @@
     <div class="carousel-inner">
       {% if movie.front_image %}
         <div class="carousel-item active">
-          <img class="d-block w-100" src="{{ movie.front_image.image.url }}" alt="Front Image">
+          <img class="d-block w-100" src="{{ movie.image.image.url }}" alt="Front Image">
         </div>
         {% for image in movie.movieimage_set.all %}
           <div class="carousel-item">
@@ -45,7 +45,7 @@
   <a href="{% url 'movie_image_add' movie.id %}">Add image</a>
   
   <p>Average rating: {{ movie.average_rating }}</p>
-  <a href="https://www.imdb.com/title/tt{{ movie.imdb_reference }}">IMDB reference: {{ movie.imdb_reference }}</a>
+  <a href="{{ movie.imdbLink }}">IMDB reference: {{ movie.imdbLink }}</a>
   <p><strong>Genres:</strong></p>
   {% for genre in genres %}
     <li><a href="{% url 'genre_detail' genre.id %}">{{ genre.name }}</a></li>

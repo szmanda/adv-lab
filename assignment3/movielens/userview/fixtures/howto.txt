@@ -1,0 +1,6 @@
+1. change DATA_DIR in parser.py  
+2. run parser.py
+3. flush database: python manage.py flush
+4. update models: python manage.py makemigrations && python manage.py migrate
+5. load fixture: python manage.py loaddata sample
+6. create superuser: python manage.py createsuperuser

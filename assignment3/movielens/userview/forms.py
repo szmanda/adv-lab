@@ -20,14 +20,14 @@ class NewUserForm(UserCreationForm):
         return user
     
 class RatingForm(forms.ModelForm):
-    value = forms.IntegerField(min_value=1, max_value=10, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    value = forms.IntegerField(min_value=1, max_value=5, widget=forms.NumberInput(attrs={'class': 'form-control'}))
     
     class Meta:
         model = Rating
         fields = ('value',)
 
 class MovieForm(forms.ModelForm):
-    front_image = forms.ModelChoiceField(
+    image = forms.ModelChoiceField(
         queryset=MovieImage.objects.all(),
         required=False,
         empty_label='No front image'
@@ -40,7 +40,7 @@ class MovieForm(forms.ModelForm):
 
     class Meta:
         model = Movie
-        fields = ['title', 'genres', 'imdb_reference', 'front_image']
+        fields = ['title', 'year', 'genres', 'director', 'imdbLink', 'description', 'image']
 
 class MovieImageForm(forms.ModelForm):
     image = forms.ImageField(max_length=100000000)

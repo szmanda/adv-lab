@@ -38,7 +38,7 @@ def view_genre(request: HttpRequest, genre_id):
     return HttpResponse(template.render(context, request))
 
 class IndexView(generic.ListView):
-    paginate_by = 2
+    paginate_by = 10
     template_name = 'userview/movies_list.html'
     context_object_name = 'movies'
     def get_queryset(self):
@@ -59,7 +59,7 @@ class GenreView(generic.DetailView):
     template_name = 'userview/genre_detail.html'
 
 class IndexView(generic.ListView):
-    paginate_by = 2
+    paginate_by = 10
     template_name = 'userview/movies_list.html'
     context_object_name = 'movies'
     def get_queryset(self):
@@ -69,7 +69,7 @@ class RatedMoviesView(LoginRequiredMixin, generic.ListView):
     model = Movie
     template_name = 'userview/rated_movies_list.html'
     context_object_name = 'movies'
-    paginate_by = 2
+    paginate_by = 10
 
     def get_queryset(self):
         user = self.request.user
