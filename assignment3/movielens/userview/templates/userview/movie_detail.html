@@ -45,6 +45,9 @@
   <a href="{% url 'movie_image_add' movie.id %}">Add image</a>
   
   <p>Average rating: {{ movie.average_rating }}</p>
+  {% if user.is_authenticated %}
+  <p>Your rating: {{ user_rating }}</p>
+  {% endif %}
   <a href="{{ movie.imdbLink }}">IMDB reference: {{ movie.imdbLink }}</a>
   <p><strong>Genres:</strong></p>
   {% for genre in genres %}
@@ -60,7 +63,9 @@
   {% endfor %}
 
   <div class="mt-4" style="height: 10em;">
+    {% if user.is_authenticated %}
     <a class="action btn btn-secondary" href="{% url 'movie_edit' movie.id %}">Edit Movie</a>
+    {% endif %}
     <a class="action btn btn-secondary" href="{% url 'rating_add' movie.id %}">Add Rating</a>
     <a class="action btn btn-secondary" href="{% url 'comment_add' movie.id %}">Add Comment</a>
   </div>

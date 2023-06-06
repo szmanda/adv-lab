@@ -52,6 +52,12 @@ class MovieView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['genres'] = self.object.genres.all()
         context['comments'] = Comment.objects.filter(movie=self.object)
+
+        context['user_rating'] = 'not rated'
+        if self.request.user.is_authenticated:
+            rating = Rating.objects.filter(movie=self.object, user=self.request.user)
+            if rating:
+                context['user_rating'] = rating[0].value
         return context
 
 class GenreView(generic.DetailView):
@@ -119,6 +125,9 @@ def rating_delete(request, rating_id):
         rating = get_object_or_404(Rating, id=rating_id, user=request.user)
         movie = rating.movie
         rating.delete()
+        movie_ratings = Rating.objects.filter(movie=movie)
+        movie.average_rating = movie_ratings.aggregate(Avg('value'))['value__avg']
+        movie.save()
         messages.success(request, f'Your rating for {movie.title} has been deleted.')
         return redirect('rated')
     else:
