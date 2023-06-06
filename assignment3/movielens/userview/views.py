@@ -7,8 +7,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from .models import Movie, Genre, Rating, Comment
-from .forms import NewUserForm, RatingForm, MovieForm, CommentForm
+from .models import Movie, Genre, Rating, Comment, MovieImage
+from .forms import NewUserForm, RatingForm, MovieForm, CommentForm, MovieImageForm
 
 
 
@@ -38,7 +38,7 @@ def view_genre(request: HttpRequest, genre_id):
     return HttpResponse(template.render(context, request))
 
 class IndexView(generic.ListView):
-    paginate_by = 2
+    paginate_by = 10
     template_name = 'userview/movies_list.html'
     context_object_name = 'movies'
     def get_queryset(self):
@@ -52,6 +52,12 @@ class MovieView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['genres'] = self.object.genres.all()
         context['comments'] = Comment.objects.filter(movie=self.object)
+
+        context['user_rating'] = 'not rated'
+        if self.request.user.is_authenticated:
+            rating = Rating.objects.filter(movie=self.object, user=self.request.user)
+            if rating:
+                context['user_rating'] = rating[0].value
         return context
 
 class GenreView(generic.DetailView):
@@ -59,7 +65,7 @@ class GenreView(generic.DetailView):
     template_name = 'userview/genre_detail.html'
 
 class IndexView(generic.ListView):
-    paginate_by = 2
+    paginate_by = 10
     template_name = 'userview/movies_list.html'
     context_object_name = 'movies'
     def get_queryset(self):
@@ -69,7 +75,7 @@ class RatedMoviesView(LoginRequiredMixin, generic.ListView):
     model = Movie
     template_name = 'userview/rated_movies_list.html'
     context_object_name = 'movies'
-    paginate_by = 2
+    paginate_by = 10
 
     def get_queryset(self):
         user = self.request.user
@@ -119,6 +125,9 @@ def rating_delete(request, rating_id):
         rating = get_object_or_404(Rating, id=rating_id, user=request.user)
         movie = rating.movie
         rating.delete()
+        movie_ratings = Rating.objects.filter(movie=movie)
+        movie.average_rating = movie_ratings.aggregate(Avg('value'))['value__avg']
+        movie.save()
         messages.success(request, f'Your rating for {movie.title} has been deleted.')
         return redirect('rated')
     else:
@@ -241,7 +250,6 @@ def comment_delete(request, pk):
         return redirect("login")
 
 ## admin page with a form to add a new movie
-from .forms import MovieForm
 def admin_page(request):
     if request.user.is_authenticated and request.user.is_superuser:
         if request.method == 'POST':
@@ -255,6 +263,26 @@ def admin_page(request):
     else:
         return redirect("login")
 
+def movie_image_add(request, movie_id):
+    if request.user.is_authenticated and request.user.is_superuser:
+        movie = get_object_or_404(Movie, pk=movie_id)
+        if request.method == 'POST':
+            form = MovieImageForm(request.POST, request.FILES)
+            if form.is_valid():
+                image = form.save(commit=False)
+                image.movie = movie
+                image.save()
+                return redirect('movie_detail', pk=movie_id)
+            else:
+                messages.error(request, form.errors)
+                return redirect('movie_image_add', movie_id)
+        
+        else:
+            form = MovieImageForm()
+            return render(request, 'userview/movie_image_add.html', {'form': form})
+    else:
+        return redirect("login")
+    
 ## home page with list of recently popular films
 from .utils import get_similar_movies, get_recently_most_liked_movies
 def home_page(request):

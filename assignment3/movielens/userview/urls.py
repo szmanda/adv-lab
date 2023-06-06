@@ -1,11 +1,14 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("list", views.IndexView.as_view(), name="movies_list"),
     path("genre/<int:pk>", views.GenreView.as_view(), name="genre_detail"),
     path("movie/<int:pk>", views.MovieView.as_view(), name="movie_detail"),
     path("movie/add", views.movie_add, name="movie_add"),
+    path("movie/image/add/<int:movie_id>", views.movie_image_add, name="movie_image_add"),
     path("movie/edit/<int:pk>", views.movie_edit, name="movie_edit"),
     path("rated", views.RatedMoviesView.as_view(), name="rated"),
     path("rating/add/<int:movie_id>", views.rating_add, name="rating_add"),
@@ -19,3 +22,7 @@ urlpatterns = [
     path("admin_page", views.admin_page, name="admin_page"),
     path("", views.home_page, name="home_page"),
 ]
+
+if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL,
+                              document_root=settings.MEDIA_ROOT)
