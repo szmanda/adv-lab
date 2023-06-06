@@ -21,8 +21,5 @@ def get_recently_most_liked_movies(cutoff_date = datetime.date.today()):
     liked_movies = Movie.objects.filter(rating__in=recent_ratings).annotate(
         positive_rating_count=Count('rating', output_field=models.IntegerField())
     ).order_by('-positive_rating_count')[:10]
-    
-    for movie in liked_movies:
-        print(movie.title, movie.positive_rating_count, type(movie.positive_rating_count))
 
     return liked_movies

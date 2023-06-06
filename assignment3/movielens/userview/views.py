@@ -286,13 +286,16 @@ def movie_image_add(request, movie_id):
 ## home page with list of recently popular films
 from .utils import get_similar_movies, get_recently_most_liked_movies
 def home_page(request):
-    movies = Movie.objects.order_by('-average_rating')[:5]
-    
-    # movies = get_similar_movies(1)
+    # movies = Movie.objects.order_by('-average_rating')[:5]
     movies = get_recently_most_liked_movies()
+    movies_recommendations = None
+    if request.user.is_authenticated:
+        random_user_rated_movie = Rating.objects.filter(user=request.user).order_by('?').first()
+        movies_recommendations = get_similar_movies(random_user_rated_movie.movie.id)[:5]
     
     template = loader.get_template('userview/home_page.html')
     context = {
-        'recently_popular_movies': movies
+        'recently_popular_movies': movies,
+        'recommendations': movies_recommendations,
     }
     return HttpResponse(template.render(context, request))

@@ -41,8 +41,30 @@
     <div style="height: 5em"></div>
 
     {% if user.is_authenticated %}
-        <h3>Your reccomendations</h3>
-
+        <h3>Your recommendations</h3>
+        <div class="list-group">
+          {% for movie in recommendations %}
+          <a href="/movie/{{movie.id}}" class="list-group-item list-group-item-action flex-column align-items-start" aria-current="true">
+              <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1" style="display: inline-block; width: 50%">{{ movie.title }}</h5>
+                    <small>
+                      {% if 1 <= movie.average_rating %}⭐{% endif %}
+                      {% if 2 <= movie.average_rating %}⭐{% endif %}
+                      {% if 3 <= movie.average_rating %}⭐{% endif %}
+                      {% if 4 <= movie.average_rating %}⭐{% endif %}
+                      {% if 5 <= movie.average_rating %}⭐{% endif %}
+                    </small>
+                  <small style="display: inline-block; width: 20%">
+                      {% for genre in movie.genres.all %}
+                      {{ genre.name }}
+                      {% endfor %}
+                  </small>
+                </div>
+            </a>
+            {% endfor %}
+      </div>
     {% endif %}
+
+    <div style="height: 5em"></div>
 </div>
 {% endblock %}
