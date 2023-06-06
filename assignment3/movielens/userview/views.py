@@ -291,7 +291,8 @@ def home_page(request):
     movies_recommendations = None
     if request.user.is_authenticated:
         random_user_rated_movie = Rating.objects.filter(user=request.user).order_by('?').first()
-        movies_recommendations = get_similar_movies(random_user_rated_movie.movie.id)[:5]
+        if random_user_rated_movie != None:
+            movies_recommendations = get_similar_movies(random_user_rated_movie.movie.id)[:5]
     
     template = loader.get_template('userview/home_page.html')
     context = {

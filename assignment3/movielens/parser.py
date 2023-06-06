@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'movielens.settings')
 django.setup()
 
-DATA_DIR = 'C:\\Users\\Maciej\\Downloads\\data' # CHANGE THIS
+DATA_DIR = 'C:\\Users\\micha\\Downloads\\data' # CHANGE THIS
 MEDIA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media')
 FIXTURE_FILEPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'userview', 'fixtures', 'sample.json')
 MOVIES_DATA_DIR = os.path.join(DATA_DIR, 'picked_movies')
