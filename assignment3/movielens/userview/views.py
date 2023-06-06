@@ -206,7 +206,7 @@ def movie_add(request):
         return redirect("login")
 
 def movie_edit(request, pk):
-    if request.user.is_authenticated:
+    if request.user.is_superuser:
         movie = get_object_or_404(Movie, pk=pk)
         if request.method == 'POST':
             form = MovieForm(request.POST, instance=movie)
