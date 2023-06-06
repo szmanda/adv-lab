@@ -256,8 +256,12 @@ def admin_page(request):
         return redirect("login")
 
 ## home page with list of recently popular films
+from .utils import get_similar_movies, get_recently_most_liked_movies
 def home_page(request):
     movies = Movie.objects.order_by('-average_rating')[:5]
+    
+    # movies = get_similar_movies(1)
+    movies = get_recently_most_liked_movies()
     
     template = loader.get_template('userview/home_page.html')
     context = {

@@ -17,6 +17,7 @@ class Rating(models.Model):
     value = models.IntegerField()
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # TODO: Add timestamp = models.DateTimeField(auto_now_add=True) # required for get_recently_most_liked_movies
     
 class Comment(models.Model):
     text = models.CharField(max_length=1000)
