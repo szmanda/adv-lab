@@ -1,0 +1,21 @@
+{% extends "embed/base.html" %}
+{% load embed_video_tags %}
+{% block content %}
+    {% for item in videos %}
+        {% video item.video as this_video %}
+        {%video this_video "small"%}
+            {{ this_video.thumbnail }}
+            {{ this_video.url }}
+        {% endvideo %}
+        {% video item.video query="mute=1&autoplay=1" as this_video %}
+        {%video this_video "40% x 20%"%}
+            {{ this_video.thumbnail }}
+            {{ this_video.url }}
+        {% endvideo %}
+        {% video item.video query="controls=0" as this_video %}
+        {%video this_video "200x200"%}
+            {{ this_video.thumbnail }}
+            {{ this_video.url }}
+        {% endvideo %}
+    {% endfor %}
+{% endblock content %}
