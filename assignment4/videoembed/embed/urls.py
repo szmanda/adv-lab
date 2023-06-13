@@ -18,6 +18,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", views.IndexView.as_view(), name="index"),
+    path("player/<int:video_id>", views.player, name="player"),
     path("example", views.example, name="example"),
 ]

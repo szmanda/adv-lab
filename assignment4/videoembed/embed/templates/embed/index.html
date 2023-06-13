@@ -1,0 +1,46 @@
+{% extends "embed/base.html" %}
+{% load embed_video_tags %}
+{% block content %}
+<div class="row justify-content-center align-items-center g-2 p-3">
+<div class="col-10">
+    <h1>Videos</h1>
+    {% for item in page_obj %}
+        {% video item.video as this_video %}
+        <div class="card mb-3" style="width: 100%;">
+            <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ this_video.thumbnail }}" class="img-fluid rounded-start" alt="Card title">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                <h3 class="card-title">{{ item.title }}</h3>
+                <a class="btn btn-primary" href="{% url 'player' video_id=item.id %}" role="button">Watch</a>
+                </div>
+            </div>
+            </div>
+        </div>
+        {% endvideo %}
+    {% empty %}
+        <p>No videos available</p>
+    {% endfor %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+      
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+      
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+      </div>
+</div>
+</div>
+{% endblock %}

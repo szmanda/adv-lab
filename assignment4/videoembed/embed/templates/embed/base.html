@@ -3,15 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}MovieLens{% endblock %}</title>
+  <title>{% block title %}Embedded Videos{% endblock %}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-</head>
+  {% block styles %}{% endblock %}
+  </head>
 <body>
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-3">
+      <a class="navbar-brand" href="/">📺Player</a>
+  </nav>
+  
   <main>
-  {% block content %}
-  {% endblock %}
+    {% block content %}
+    {% endblock %}
   </main>
+  
   {% if messages %}
   <ul class="messages">
       {% for message in messages %}
